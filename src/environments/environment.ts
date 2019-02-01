@@ -5,6 +5,7 @@
 export const environment = {
   production: false
 };
+export const weatherUrl = 'http://api.openweathermap.org/data/2.5/weather?&units=metric&appid=0eaf521b64fba5302aefd89dfb355a40';
 
 /*
  * For easier debugging in development mode, you can import the following file
