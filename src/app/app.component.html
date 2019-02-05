@@ -18,5 +18,5 @@
     <button class="mat-accent" mat-mini-fab (click)="saveWeatherToLocalStorage(weatherData.name)">+</button>
   </mat-card-actions>
 </mat-card>
-<app-saved-cards></app-saved-cards>
+<app-saved-cards [weatherDataToSavedCards]="weatherDataToSavedCards"></app-saved-cards>
 <router-outlet></router-outlet>

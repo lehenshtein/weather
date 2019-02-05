@@ -15,39 +15,29 @@ export class WeatherFromToLocalStorageService {
   saveWeatherToLocalStorage(name) {
     if (localStorage.getItem('weather') !== null) {
       this.weatherArr = JSON.parse(localStorage.getItem('weather'));
+      if (localStorage.getItem('weather').indexOf(name) === -1) {
+        this.weatherArr.unshift(name);
+        localStorage.setItem('weather', JSON.stringify(this.weatherArr));
+      }
     }
-    this.weatherArr.unshift(name);
-    localStorage.setItem('weather', JSON.stringify(this.weatherArr));
+
   }
   getWeatherFromLocalStorage () {
     if (localStorage.getItem('weather') !== null) {
       this.weatherArr = JSON.parse(localStorage.getItem('weather'));
-      this.weatherArr.forEach(i => {
-        this.weatherService.searchWeather(i)
-          .subscribe(
-            (data: Weather) => {
-              this.weatherCardsData.unshift(data);
-              console.log(i);
-            }
-          );
-      });
+      return forkJoin(...this.weatherArr.map(i => {
+        return this.weatherService.searchWeather(i);
+      }));
     }
   }
   getLastWeatherFromLocalStorage () {
     if (localStorage.getItem('weather') !== null) {
       this.weatherArr = JSON.parse(localStorage.getItem('weather'));
-
-      this.weatherService.searchWeather(this.weatherArr[0])
-        .subscribe(
-          (data: Weather) => {
-            this.weatherCardsData.unshift(data);
-          }
-        );
+      return this.weatherService.searchWeather(this.weatherArr[0]);
     }
   }
   removeWeatherFromLocalStorage(cardIndex) {
     if (localStorage.getItem('weather') !== null) {
-      //this.weatherArr = JSON.parse(localStorage.getItem('weather'));
       this.weatherArr.splice(cardIndex, 1);
       localStorage.setItem('weather', JSON.stringify(this.weatherArr));
     }

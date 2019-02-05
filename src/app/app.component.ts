@@ -12,6 +12,7 @@ import {GeoWeatherService} from './geo-weather.service';
 export class AppComponent implements OnInit {
 
   weatherData;
+  weatherDataToSavedCards: Weather;
   lat: string;
   lon: string;
 
@@ -21,7 +22,6 @@ export class AppComponent implements OnInit {
      private geoWeather: GeoWeatherService
   ) {}
   ngOnInit() {
-
     this.geoWeather.getGeo()
       .subscribe((geoData) => {
       this.lat = geoData.latitude;
@@ -31,6 +31,11 @@ export class AppComponent implements OnInit {
         .subscribe((data: Weather) => {
           this.weatherData = new Weather(data.clouds, data.main, data.name);
         });
+        if (localStorage.getItem('weather')) {
+          return;
+        } else {
+          JSON.stringify(localStorage.setItem('weather', '[]'));
+        }
     });
 
     this.weatherFromToLocalStorageService.getWeatherFromLocalStorage();
@@ -41,7 +46,13 @@ export class AppComponent implements OnInit {
   }
   saveWeatherToLocalStorage(name) {
     this.weatherFromToLocalStorageService.saveWeatherToLocalStorage(name);
-    this.weatherFromToLocalStorageService.getLastWeatherFromLocalStorage();
+    this.weatherFromToLocalStorageService.getLastWeatherFromLocalStorage()
+      .subscribe(
+        (data: Weather) => {
+          this.weatherDataToSavedCards = data;
+          this.weatherFromToLocalStorageService.weatherCardsData.unshift(data);
+        }
+      );
   }
 
 }
